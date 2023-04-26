@@ -1,18 +1,66 @@
+const fs = require('fs')
 const path = require('path');
+
+const uuid = require('../helpers/uuid');
 
 module.exports = (app) => {
 
     app.get("/api/notes", (req, res) => {
-        
+        // res.status(200).json(notes);
+        res.json(`${req.method} request received to get notes`);
     })
 
     app.post("/api/notes", (req, res) => {
+        console.info(`${req.method} request received to add a note`);
 
-    })
+        // Destructuring assignment for the items in req.body
+        const { noteTitle, noteText} = req.body;
+        // req.body.product;
+        // If all the required properties are present
+        if (noteTitle && noteText) {
+          // Variable for the object we will save
+          const newNote = {
+            noteTitle,
+            noteText,
+            uuid: uuid(),
+          };
+          console.log(newNote);
+          fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+            if (err) {
+                console.error(err);
+            } else {
+                const parsedNotes = JSON.parse(data);
 
-    app.delete("/api/notes/:id", (req, res) => {
+                parsedNotes.push(newNote)
+                
+                // Write the string to a file
+                fs.writeFile(
+                    './db/db.json',
+                    JSON.stringify(parsedNotes, null, 4),
+                    (writeErr) =>
+                      writeErr
+                        ? console.error(writeErr)
+                        : console.info('Successfully updated notes!')
+                  );
+                }
+              });
+      
+          const response = {
+            status: 'success',
+            body: newNote,
+          };
+      
+          console.log(response);
+          res.status(201).json(response);
+        } else {
+          res.status(500).json('Error in posting note');
+        }
+      });
 
-    })
+
+    // app.delete("/api/notes/:id", (req, res) => {
+
+    // })
 }
 
 // The following API routes should be created:

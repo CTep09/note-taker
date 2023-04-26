@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 require("./router/htmlRouter")(app);
-// require("./router/apiRouter")(app);
+require("./router/apiRouter")(app);
 
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT} 🚀`)
