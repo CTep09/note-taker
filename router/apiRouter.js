@@ -1,28 +1,32 @@
 const fs = require('fs')
 const path = require('path');
 
-const uuid = require('../helpers/uuid');
+const { v4: uuidv4 } = require('uuid');
+const db = require('../db/db.json');
+
 
 module.exports = (app) => {
 
     app.get("/api/notes", (req, res) => {
         // res.status(200).json(notes);
-        res.json(`${req.method} request received to get notes`);
+        // res.json(`${req.method} request received to get notes`);
+        // res.sendFile(db);
+
     })
 
     app.post("/api/notes", (req, res) => {
         console.info(`${req.method} request received to add a note`);
 
         // Destructuring assignment for the items in req.body
-        const { noteTitle, noteText} = req.body;
+        const { title, text} = req.body;
         // req.body.product;
         // If all the required properties are present
-        if (noteTitle && noteText) {
+        if (title && text) {
           // Variable for the object we will save
           const newNote = {
-            noteTitle,
-            noteText,
-            uuid: uuid(),
+            title,
+            text,
+            id: uuidv4(),
           };
           console.log(newNote);
           fs.readFile('./db/db.json', 'utf-8', (err, data) => {
