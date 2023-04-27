@@ -2,17 +2,26 @@ const fs = require('fs')
 const path = require('path');
 
 const { v4: uuidv4 } = require('uuid');
-const db = require('../db/db.json');
+// const db = require('../db/db.json');
 
 
 module.exports = (app) => {
-
-    app.get("/api/notes", (req, res) => {
-        // res.status(200).json(notes);
-        // res.json(`${req.method} request received to get notes`);
+  
+  app.get("/api/notes", (req, res) => {
+    const parsedNotes = getNotes();
+    res.json(parsedNotes);
+    console.info(`${req.method} loaded saved notes`)
+    
+    const getNotes = function(){
+      const noteData = fs.readFileSync('./db/db.json', 'utf-8');
+      const parsedNotes = JSON.parse(noteData);
+    
+      return parsedNotes;
+    } 
+      // res.status(200).json(notes);
         // res.sendFile(db);
 
-    })
+    });
 
     app.post("/api/notes", (req, res) => {
         console.info(`${req.method} request received to add a note`);
